@@ -1,32 +1,22 @@
-FROM alpine:3.3
-MAINTAINER Christopher Sexton <chris@radiusnetworks.com>
+FROM ruby:2.3.0
 
-ENV RUBY_VERSION 2.3.0
-ENV RUBY_DOWNLOAD_SHA256 ba5ba60e5f1aa21b4ef8e9bf35b9ddb57286cb546aac4b5a28c71f459467e507
+# Install Gem depencencies:
+#    postgres: libpq-dev
+#    nokogiri: libxml2-dev libxslt1-dev
+RUN apt-get update -qq && \
+    apt-get install -y \
+    build-essential \
+    libpq-dev \
+    libxml2-dev \
+    libxslt1-dev \
+    nodejs && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-ENV RAILS_ENV=production
+RUN gem install bundler foreman --no-rdoc --no-ri
 
-ENV BASE_PACKAGES bash curl gmp git nodejs
-ENV BUILD_PACKAGES build-base libc-dev linux-headers openssl-dev postgresql-dev libxml2-dev libxslt-dev readline-dev
+ENV APP_HOME /app
+RUN mkdir $APP_HOME
+WORKDIR $APP_HOME
 
-EXPOSE 3000
-
-RUN apk update && \
-    apk upgrade && \
-    apk add $BASE_PACKAGES && \
-    rm -rf "/var/cache/apk/*"
-
-RUN apk --update add --virtual build_deps $BUILD_PACKAGES && \
-    cd "/tmp" && \
-    mkdir -p "/opt" && \
-    curl -L "https://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.0.tar.gz" -o ruby.tar.gz && \
-    tar -xzf ruby.tar.gz && \
-    rm ruby.tar.gz && \
-    cd "/tmp/ruby-2.3.0" && \
-    ./configure --disable-install-doc --prefix=/opt && \
-    make && \
-    make install && \
-    rm -rf "/tmp/ruby-2.3.0" && \
-    rm -rf "/var/cache/apk/*"
-
-
+CMD ["/bin/bash"]
