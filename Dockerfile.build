@@ -6,7 +6,7 @@ ENV RUBY_DOWNLOAD_SHA256 ba5ba60e5f1aa21b4ef8e9bf35b9ddb57286cb546aac4b5a28c71f4
 
 ENV RAILS_ENV=production
 
-ENV BASE_PACKAGES bash curl gmp git nodejs
+ENV BASE_PACKAGES bash curl gmp git
 ENV BUILD_PACKAGES build-base libc-dev linux-headers openssl-dev postgresql-dev libxml2-dev libxslt-dev readline-dev
 
 EXPOSE 3000
@@ -29,4 +29,9 @@ RUN apk --update add --virtual build_deps $BUILD_PACKAGES && \
     rm -rf "/tmp/ruby-2.3.0" && \
     rm -rf "/var/cache/apk/*"
 
+RUN tar -cvf opt.tar opt
 
+WORKDIR /
+
+
+CMD ["cat", "opt.tar"]

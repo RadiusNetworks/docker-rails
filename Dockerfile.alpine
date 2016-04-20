@@ -1,0 +1,57 @@
+FROM alpine:3.3
+MAINTAINER Christopher Sexton <chris@radiusnetworks.com>
+
+ENV RUBY_MAJOR 2.3
+ENV RUBY_VERSION 2.3.0
+ENV RUBY_DOWNLOAD_SHA1 96e620e38af351c8da63e40cfe217ec79f912ba1
+ENV RUBY_DOWNLOAD_SHA256 ba5ba60e5f1aa21b4ef8e9bf35b9ddb57286cb546aac4b5a28c71f459467e507
+
+ENV BUNDLER_VERSION 1.11.2
+ENV RUBYGEMS_VERSION 2.6.3
+
+ENV RAILS_ENV=production
+
+ENV BASE_PACKAGES bash curl gmp git nodejs ruby ruby-irb ruby-io-console
+ENV BUILD_PACKAGES build-base libc-dev linux-headers openssl-dev postgresql-dev libxml2-dev libxslt-dev readline-dev ruby-dev
+
+RUN apk update && \
+    apk upgrade && \
+    apk add $BASE_PACKAGES && \
+    rm -rf "/var/cache/apk/*"
+
+#RUN apk --update add --virtual build_deps $BUILD_PACKAGES && \
+#    cd "/tmp" && \
+#    mkdir -p "/opt" && \
+#    curl -L "https://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.0.tar.gz" -o ruby.tar.gz && \
+#    tar -xzf ruby.tar.gz && \
+#    rm ruby.tar.gz && \
+#    cd "/tmp/ruby-2.3.0" && \
+#    ./configure --disable-install-doc --prefix=/opt && \
+#    make && \
+#    make install && \
+#    rm -rf "/tmp/ruby-2.3.0" && \
+#    rm -rf "/var/cache/apk/*"
+
+
+#ENV PATH /opt/bin:$PATH
+#ADD ./opt.tar /
+
+# skip installing gem documentation
+RUN echo -e 'install: --no-document\nupdate: --no-document' >> "/etc/gemrc"
+
+# Update gem itself
+RUN gem update --system $RUBYGEMS_VERSION
+
+RUN gem install bundler --version "$BUNDLER_VERSION"
+
+# install things globally, for great justice
+# and don't create ".bundle" in all our apps
+ENV GEM_HOME /usr/local/bundle
+ENV BUNDLE_PATH="$GEM_HOME" \
+    BUNDLE_BIN="$GEM_HOME/bin" \
+    BUNDLE_SILENCE_ROOT_WARNING=1 \
+    BUNDLE_APP_CONFIG="$GEM_HOME"
+
+ENV PATH $BUNDLE_BIN:$PATH
+RUN mkdir -p "$GEM_HOME" "$BUNDLE_BIN"
+
