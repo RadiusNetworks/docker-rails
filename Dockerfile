@@ -17,7 +17,8 @@ RUN apt-get update -qq && \
 
 # Skip installing gem documentation and install bundler
 RUN echo -e 'install: --no-document\nupdate: --no-document' >> "/etc/gemrc" && \
-    gem install bundler --version "$BUNDLER_VERSION"
+    gem install bundler --version "$BUNDLER_VERSION" && \
+    gem install foreman
 
 # install things globally, for great justice
 # and don't create ".bundle" in all our apps
