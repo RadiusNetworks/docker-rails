@@ -1,4 +1,4 @@
-FROM ruby:2.3.1
+FROM ruby:2.3.0
 
 ENV BUNDLER_VERSION="1.11.2"
 
@@ -11,6 +11,7 @@ RUN apt-get update -qq && \
     libpq-dev \
     libxml2-dev \
     libxslt1-dev \
+    postgresql-client \
     nodejs && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
