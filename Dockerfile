@@ -13,6 +13,7 @@ RUN apt-get update -qq && \
     libxslt1-dev \
     postgresql-client \
     nodejs && \
+    netcat && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
