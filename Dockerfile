@@ -12,8 +12,8 @@ RUN apt-get update -qq && \
     libxml2-dev \
     libxslt1-dev \
     postgresql-client \
+    netcat \
     nodejs && \
-    netcat && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
