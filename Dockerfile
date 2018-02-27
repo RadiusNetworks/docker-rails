@@ -1,6 +1,6 @@
 FROM ruby:2.4.3
 
-ENV BUNDLER_VERSION="1.11.2"
+ENV BUNDLER_VERSION="1.16.1"
 
 # Install Gem depencencies:
 #    postgres: libpq-dev
